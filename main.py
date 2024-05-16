@@ -1,6 +1,6 @@
 from time import sleep
 from digitador import Digitador
-from utilities import get_data
+from utilities.data_reader import get_data
 from steps import LOGIN_XPATH
 
 

@@ -2,12 +2,14 @@
 use selenium==4.20.0
 """
 
-
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-        
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 class Digitador:
     """_summary_
@@ -21,7 +23,10 @@ class Digitador:
         Args:
             url (_type_, optional): _description_. Defaults to URL.
         """        
-        self.driver = webdriver.Chrome()
+        options = Options()
+        options.add_experimental_option('detach', True)
+        #self.driver = webdriver.Chrome() forma antigua en donde habia que bajar el chomedriver especifico de la version a utilizar
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         self.driver.get(url)
         sleep(2)
    
