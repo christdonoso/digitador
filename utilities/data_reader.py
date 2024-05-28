@@ -1,10 +1,11 @@
 """
-module with utility functions
+module with utility functions to import data
 """
 
 import csv
 import datetime
-#from ..errors import WrongExtention
+#from errors.data_errors import WrongExtention
+import pandas as pd
 from openpyxl import load_workbook
 
 
@@ -12,16 +13,7 @@ month_to_str = lambda x : x if x > 10 else f'0{x}'
 day_to_str = lambda x : x if x > 10 else f'0{x}'
 
 HEADER = ['rut', 'rbd', 'peso', 'talla', 'menarquia', 'diagnostico', 'fecha evaluacion']
-
-
-def validate_row(data:list|tuple, header:list) -> list:
-    """
-    funcion que toma la data y entrega el indice de las columnas de interes para poder extraer solo
-    las columnas necesarias, necesita como argumento la data y el encabezado valido.
-    """
-    file_header = data[0]
-    header_index = [index for index, value in enumerate(file_header) if value.lower() in header]
-    return header_index
+UPPER_HEADER = [word.upper() for word in HEADER]
 
 
 def open_csv(root, delim=',', new_line='\n')-> list:
@@ -35,45 +27,50 @@ def open_csv(root, delim=',', new_line='\n')-> list:
     return lista        
 
 
-def generate_report(header, data):
-    report = {
-        key:0 for key in header
-    }
-
-    for line in data:
-        for index,item in enumerate(line):
-            report[HEADER[index]] += 1
-
-    return report
-
-def validate_data(data:list, valid_index:list) -> list:
-    
+def validate_data(data:list) -> list:
+    """
+    funcion que toma la data y valida los datos, y los deja en formato de entero
+    y de fechas como strings
+    """
     valid_data = []
 
-    for line in data:
+    for row in data:
 
-        valid_line = []
-        for index, item in enumerate(line):
-            if index in valid_index:
-                if isinstance(item, float) or isinstance(item, int):
-                    valid_line.append(int(item))
+        valid_row = []
+        for item in row:
+            if isinstance(item, float) or isinstance(item, int):
+                valid_row.append(int(item))
 
-                elif isinstance(item, str):
-                    valid_line.append(item)
-                elif isinstance(item, datetime.date):
-                    valid_line.append(f'{item.year}{month_to_str(item.month)}{day_to_str(item.day)}')
+            elif isinstance(item, str):
+                valid_row.append(item)
+
+            elif isinstance(item, datetime.date):
+                valid_row.append(f'{item.year}{month_to_str(item.month)}{day_to_str(item.day)}')
+            else:
+                valid_row.append(item)
         
-        valid_data.append(valid_line)
+        valid_data.append(valid_row)
 
     return valid_data
 
 
+def validate_dataframe(valid_data:list, header=HEADER, upper_header=UPPER_HEADER)-> pd.DataFrame:
+    """
+    Funcion que recibe una lista con la data valida como lista y devuelve un dataframe 
+    validado
+    """
+    valid_header = header if header in valid_data[0] else upper_header
+    df = pd.DataFrame(valid_data[1:], columns=valid_data[0])[valid_header]
+
+    return df
+
+
 def open_excel(root:str, sheet_name:object=None):
-    # Carga el archivo Excel
     wb = load_workbook(root)
 
-    # Selecciona la hoja de Excel que quieres leer
     sheet_name = sheet_name if sheet_name else wb.sheetnames[0]
+    #sheet_name = sheet_name if sheet_name else [sheet_name for sheet_name in wb.sheetnames]
+    
     sheet = wb[sheet_name]
     data = []
 
@@ -81,31 +78,27 @@ def open_excel(root:str, sheet_name:object=None):
     for row in sheet.iter_rows(values_only=True):
         data.append(row)
 
-    valid_index = validate_row(data, HEADER)
-    valid_data = validate_data(data, valid_index)
-    report = generate_report(HEADER, valid_data)
-    print(report)
-    import pandas as pd
-    print(pd.DataFrame(valid_data))
-    return valid_data
+    valid_data = validate_data(data)
+    valid_dataframe = validate_dataframe(valid_data)
+
+    return valid_dataframe.head()
 
 
 def get_data(root, delim=',', new_line='\n'):
+    """
+    Funcion para cargar la data, esta puede venir en formato CSV o 
+    en un XLSX, de lo contratio, da un error
+    """
     if root[-3:] == 'csv':
         return open_csv(root, delim, new_line)
     
     elif root[-4:] == 'xlsx':
         return open_excel(root)
 
-    # else:
-    #     raise WrongExtention(f'el archivo {root} tiene extension incorrecta')
-
+#    else:
+#        raise WrongExtention(f'el archivo {root} tiene extension incorrecta')
 
 
 if __name__ == '__main__':
     data = open_excel('Tamizaje Los Rios 2024.xlsx')
-
-
-    for i in data[:10]:
-        print(i)
-    import pandas as p
+    print(data)
