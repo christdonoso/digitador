@@ -22,7 +22,7 @@ def open_csv(root, delim=',', new_line='\n')-> list:
     delimitador y nueva linea son opcionales.
     """        
     with open (root, new_line, encoding='utf-8') as file:
-        data = csv.reader(file, delimiter = f'{delim}')
+        data = csv.reader(file, delimiter=delim)
         lista = list(data)
     return lista        
 
@@ -39,13 +39,13 @@ def validate_data(data:list) -> list:
         valid_row = []
         for item in row:
             if isinstance(item, float) or isinstance(item, int):
-                valid_row.append(int(item))
+                valid_row.append(str(int(item)))
 
             elif isinstance(item, str):
                 valid_row.append(item)
 
             elif isinstance(item, datetime.date):
-                valid_row.append(f'{item.year}{month_to_str(item.month)}{day_to_str(item.day)}')
+                valid_row.append(f'{day_to_str(item.day)}{month_to_str(item.month)}{item.year}')
             else:
                 valid_row.append(item)
         
@@ -65,6 +65,17 @@ def validate_dataframe(valid_data:list, header=HEADER, upper_header=UPPER_HEADER
     return df
 
 
+def delete_nonattendants(data:pd.DataFrame)-> pd.DataFrame:
+    """
+    Elimina las filas que tienen sin regstro el pedo,talla,menaruia y el diagnostico
+    """
+    for idx, row in data.iterrows():
+        if all(pd.isna(row[col]) for col in ['PESO', 'TALLA', 'MENARQUIA', 'DIAGNOSTICO']):
+            data.drop(index=idx, inplace=True)
+
+    return data
+
+
 def open_excel(root:str, sheet_name:object=None):
     wb = load_workbook(root)
 
@@ -80,8 +91,9 @@ def open_excel(root:str, sheet_name:object=None):
 
     valid_data = validate_data(data)
     valid_dataframe = validate_dataframe(valid_data)
-
-    return valid_dataframe.head()
+    only_attended = delete_nonattendants(valid_dataframe)
+    print('no esta devoviendo solo el head')
+    return only_attended
 
 
 def get_data(root, delim=',', new_line='\n'):
@@ -101,4 +113,5 @@ def get_data(root, delim=',', new_line='\n'):
 
 if __name__ == '__main__':
     data = open_excel('Tamizaje Los Rios 2024.xlsx')
-    print(data)
+    print(data.info())
+    data.to_excel('test.xlsx')

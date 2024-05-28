@@ -7,13 +7,17 @@ LOGIN_XPATH = {
 }
 
 DIGITAR_ATENCION_COLUMNA = [
-    ('//*[@id="_BENSALRUT"]', 'send keys')
+    ('//*[@id="_BENSALRUT"]', 'send keys'),
+    ('//*[@id="_COLCOD"]', 'send keys'), 
+    ('//*[@id="TABLE2"]/tbody/tr[5]/td/span/input', 'click checkbox'),
+    ('//*[@id="TABLE1"]/tbody/tr/td[2]/input', 'click')
 ]
 
 VALIDAR_RUT_DBD = [
     ('//*[@id="_CTEESTURUT"]', 'send keys'),
     ('//*[@id="TABLE5"]/tbody/tr/td[1]/input', 'click'),
-    ('//*[@id="span_CTLCOLCOD"]', 'get text')
+    ('//*[@id="span_CTLCOLCOD"]', 'get text'),
+    ('//*[@id="span__OPCIONES_0001"]/a/img', 'try element')
 ]
 
 

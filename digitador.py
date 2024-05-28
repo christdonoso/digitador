@@ -9,12 +9,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 
 
 class Digitador:
-    """_summary_
-    Clase para poder digitar las atenciones de junaeb
+    """
+    Clase que contiene las diferentes tareas que se deben realizar al momento de digitar 
+    en una plataforma web.
     """       
 
     def __init__(self, url:str):
@@ -73,12 +75,25 @@ class Digitador:
         if state != checkbox:
             self.click(xpath)
 
-    def try_element(self, xpath:str, function:Callable):
+    def try_click_element(self, xpath:str, function:Callable=False):
+        """
+        Verifica si un elemento existe, si este existe lo clickea, de no exisitir
+        y no entregar ninguna funcion, se saltara la ejecucion, de entregarle alguna funcion
+        y no existir el elemento realiza esa funcion
+        """
+        #se puede implementar una optimizacion en que en steps venga un 3er elemento 
+        #indicando que accion se puede realizar, asi esta funcion se puede reutilizar.
         try:
-            self.driver.find_element(By.XPATH, xpath)
-            return True
-        except:
-            function()
+            element = self.driver.find_element(By.XPATH, xpath)
+            element.click(xpath)
+
+        except NoSuchElementException as e:
+            if not function:
+                print(f'{e}, se continua con la ejecucion')
+                pass
+            else:
+                print(f'{e} se aplicara la funcion {function}')
+                function()
     
     def get_text(self, xpath:str) -> str:
         """
