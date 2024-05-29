@@ -85,7 +85,7 @@ class Digitador:
         #indicando que accion se puede realizar, asi esta funcion se puede reutilizar.
         try:
             element = self.driver.find_element(By.XPATH, xpath)
-            element.click(xpath)
+            element.click()
 
         except NoSuchElementException as e:
             if not function:

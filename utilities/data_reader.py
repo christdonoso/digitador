@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 month_to_str = lambda x : x if x > 10 else f'0{x}'
 day_to_str = lambda x : x if x > 10 else f'0{x}'
 
-HEADER = ['rut', 'rbd', 'peso', 'talla', 'menarquia', 'diagnostico', 'fecha evaluacion']
+HEADER = ['rut', 'rbd', 'fecha evaluacion', 'peso', 'talla', 'menarquia', 'diagnostico']
 UPPER_HEADER = [word.upper() for word in HEADER]
 
 

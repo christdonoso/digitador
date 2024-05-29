@@ -1,13 +1,23 @@
+"""
+documentacions de esta clase // construir
+"""
+
 from digitador import Digitador
-from utilities import general
 from pandas import DataFrame
 from time import sleep
-
+from utilities import general
+import steps
 
 class DigitadorJunaeb(Digitador):
     """
     clase para poder digitar las diferentes atenciones de junaeb
     """
+
+    def __init__(self, url:str):
+        super().__init__(url)
+        self.xpat_columna_normal = steps.ATENCION_COLUMNA_NORMAL
+        self.xpat_columna_escoliosis = steps.ATENCION_COLUMNA_ESCOLIOSIS
+        self.xpat_columna_dorsocurvo = steps.ATENCION_COLUMNA_DORSOCURVO
 
     def validate_rut(self, actions:list, data_frame:DataFrame):
         """
@@ -46,6 +56,7 @@ class DigitadorJunaeb(Digitador):
         for indx,row in data.iterrows():
             item_row = list(row)
             for action in actions:
+                print(item_row)
                 if action[1] == 'send keys':
                     self.send_key(action[0], item_row[0])
                     item_row.pop(0)
@@ -61,9 +72,32 @@ class DigitadorJunaeb(Digitador):
 
                 elif action[1] == 'try element':
                     self.try_click_element(action[0])
+                
+                elif action[1] == 'call_self_method':
+                    self.digit_diagnosis(item_row[0])
             
             print(f'Estudiante numero {indx + 1} digitado')
             break
+
+    def digit_diagnosis(self, diagnosis:str):
+        if diagnosis.lower() == 'sano':
+            self.columna_normal()
+        elif diagnosis.lower() =='escoliosis':
+            self.columna_escoliosis()
+        elif diagnosis.lower() == 'dorsocurvo':
+            self.columna_dorsocurvo()
+
+    def columna_normal(self):
+        for xpath in self.xpat_columna_normal:
+            self.click(xpath)
+
+    def columna_escoliosis(self):
+        for xpath in self.xpat_columna_escoliosis:
+            self.click(xpath)
+
+    def columna_dorsocurvo(self):
+        for xpath in self.xpat_columna_dorsocurvo:
+            self.click(xpath)
 
     """
     optimizacion del codigo.
