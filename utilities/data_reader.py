@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 month_to_str = lambda x : x if x > 10 else f'0{x}'
 day_to_str = lambda x : x if x > 10 else f'0{x}'
 
-HEADER = ['rut', 'rbd', 'fecha evaluacion', 'peso', 'talla', 'menarquia', 'diagnostico']
+HEADER = ['rut', 'run', 'rbd', 'fecha evaluacion', 'peso', 'talla', 'menarquia', 'diagnostico']
 UPPER_HEADER = [word.upper() for word in HEADER]
 
 
@@ -112,6 +112,5 @@ def get_data(root, delim=',', new_line='\n'):
 
 
 if __name__ == '__main__':
-    data = open_excel('Tamizaje Los Rios 2024.xlsx')
-    print(data.info())
-    data.to_excel('test.xlsx')
+    data = open_excel('../test.xlsx')
+    print(data)
