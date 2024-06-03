@@ -20,8 +20,13 @@ DIGITAR_ATENCION_COLUMNA = [
     ('//*[@id="_CPTOSUBVLR_00010003"]', 'send keys'), #peso
     ('//*[@id="_CPTOSUBVLR_00020003"]', 'send keys'), # talla
     ('//*[@id="_CPTOSUBVLR_00030003"]', 'send keys'), #menarquia
-    ('diagnosis', 'call_self_method') #insertar diagnostico
+    ('diagnosis', 'call_self_method'), #insertar diagnostico
+    ('alert', 'click alert'), #click alert
+    #('//*[@id="TABLE5"]/tbody/tr[3]/td/span/menu/li', 'get text')#sacar info de la digitacion
+    ('//*[@id="TABLE7"]/tbody/tr/td[2]/input', 'click')
 ]
+
+
 
 ATENCION_COLUMNA_NORMAL = [
     '//*[@id="TABLE10_00020002"]/tbody/tr/td[5]/span/input',

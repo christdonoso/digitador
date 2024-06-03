@@ -13,7 +13,6 @@ month_to_str = lambda x : x if x > 10 else f'0{x}'
 day_to_str = lambda x : x if x > 10 else f'0{x}'
 
 HEADER = ['rut', 'run', 'rbd', 'fecha evaluacion', 'peso', 'talla', 'menarquia', 'diagnostico']
-UPPER_HEADER = [word.upper() for word in HEADER]
 
 
 def open_csv(root, delim=',', new_line='\n')-> list:
@@ -29,8 +28,8 @@ def open_csv(root, delim=',', new_line='\n')-> list:
 
 def validate_data(data:list) -> list:
     """
-    funcion que toma la data y valida los datos, y los deja en formato de entero
-    y de fechas como strings
+    funcion que toma la data , y los deja en formato que necesitan para poder
+    de entero ser digitados en plafaorma, los enteros, float y las fechas quedan como strings
     """
     valid_data = []
 
@@ -54,12 +53,13 @@ def validate_data(data:list) -> list:
     return valid_data
 
 
-def validate_dataframe(valid_data:list, header=HEADER, upper_header=UPPER_HEADER)-> pd.DataFrame:
+def validate_dataframe(valid_data:list, header:list)-> pd.DataFrame:
     """
     Funcion que recibe una lista con la data valida como lista y devuelve un dataframe 
     validado
     """
-    valid_header = header if header in valid_data[0] else upper_header
+    valid_header = [item.upper() for item in header if item in valid_data[0] or item.upper() in valid_data[0]]
+    print(valid_header)
     df = pd.DataFrame(valid_data[1:], columns=valid_data[0])[valid_header]
 
     return df
@@ -90,7 +90,7 @@ def open_excel(root:str, sheet_name:object=None):
         data.append(row)
 
     valid_data = validate_data(data)
-    valid_dataframe = validate_dataframe(valid_data)
+    valid_dataframe = validate_dataframe(valid_data, HEADER)
     only_attended = delete_nonattendants(valid_dataframe)
     print('no esta devoviendo solo el head')
     return only_attended
@@ -112,5 +112,5 @@ def get_data(root, delim=',', new_line='\n'):
 
 
 if __name__ == '__main__':
-    data = open_excel('../test.xlsx')
+    data = open_excel('Comuna Osorno.xlsx')
     print(data)

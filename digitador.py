@@ -7,6 +7,7 @@ from typing import Callable
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
@@ -57,7 +58,9 @@ class Digitador:
         del input que se desea escribir y el mensaje.
         """
         self.click(xpath)
-        self.driver.find_element(By.XPATH,xpath).send_keys(Keys.BACKSPACE)
+        self.driver.find_element(By.XPATH, xpath).send_keys(Keys.END)
+        for _ in range(20):
+            self.driver.find_element(By.XPATH,xpath).send_keys(Keys.BACKSPACE)
         self.driver.find_element(By.XPATH,xpath).send_keys(text) 
 
     def click_alert(self):
@@ -101,6 +104,16 @@ class Digitador:
         """
         text = self.driver.find_element(By.XPATH, xpath).text
         return text
+    
+    def select(self, xpath:str) -> None:
+        select_element = self.driver.find_element(By.XPATH, xpath)
+        select = Select(select_element)
+        for idx, element in enumerate(select.options):
+            print(f'Elemento {idx}: {element.text}')
+        #esto necesita ser una funcion que valide si la opcion ingresada es un numero o no!!!
+        index_item = int(input('Indique el numero del elemento que desea seleccionr: '))
+        select.select_by_index(index_item)
+
 
     # def digitar_columna(self, region=str):
     #     """
